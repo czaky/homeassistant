@@ -1,0 +1,378 @@
+blueprint:
+  name: Party Lights
+  author: Multiple
+  description: |
+    **Version 1.4**
+
+    Lights go to party mode (color loops or fade-in-and-out)
+
+  source_url: https://gist.github.com/Twanne/fe33ab8466f9a4e94b3f8e21f745a377
+  domain: automation
+  input:
+    # Select input_boolean
+    party_mode_trigger:
+      name: Party mode trigger
+      description: |
+        The trigger you want to use to turn the party mode on.
+        The automation will keep running until this is turned off.
+        Settings > Devices & services > Helpers > Create helper > Toggle.
+
+        Supported entity types:
+          - input_boolean
+          - switch
+      default: []
+      selector:
+        entity:
+          domain:
+            - input_boolean
+            - switch
+    # Target lights
+    target_light:
+      name: Target lights
+      description: Which lights do you want to control?
+      selector:
+        entity:
+          multiple: True
+          filter:
+            domain: light
+    # Synchronize or not
+    sync_lights:
+      name: Synchronize lights
+      description: |
+        If more than 1 target light is selected, choose if they will all change together or if they each get their own random values.
+
+        **NOTE:**
+        *Light groups will be seen an a single entity.*
+      default: False
+      selector:
+        boolean:
+    # Should the color be attributed randomly or cycled.
+    randomize_color:
+      name: Randomize color
+      description: |
+        Color of the lights changes randomly instead of in a cycle.
+      default: False
+      selector:
+        boolean:
+    # Hue step
+    hue_step:
+      name: How fast to cycle the color hue? 
+      default: 60
+      selector:
+        number:
+          min: 1
+          max: 255
+          step: 1
+          mode: slider   
+    # Time between changes
+    time_between_changes:
+      name: Time between changes
+      description: Change the lights setting after this duration
+      default:
+        hours: 0
+        minutes: 0
+        seconds: 10
+      selector:
+        duration:
+    # Transition
+    transition_time:
+      name: Transition time
+      description: |
+        The time it takes for the light to transition to the assigned value when it's triggered.
+
+        WARNING!: 
+          This value should not be greater than the time between changes
+      default: 1
+      selector:
+        number:
+          min: 0
+          max: 300
+          step: 1
+          unit_of_measurement: s
+          mode: slider
+    # Select color mode
+    color_mode:
+      name: Color mode
+      description: |
+        Select how the lights need to change
+          
+          1. ⬛ **NO COLOR CHANGE:**
+          Don't change colors.
+
+          2. 🌈 **RANDOM COLOR MODE**
+          Change all RGB values randomly.
+
+          3. 🌈 **HUE MODE**
+          Change the hue randomly.
+
+          3. 🌈 **PALETTE**
+          Cycle colors from a palette.
+
+          4. 🟥 **REDS ONLY MODE:**
+          Change only red value randomly.
+
+          5. 🟩 **GREENS ONLY MODE:**
+          Change only green value randomly.
+
+          6. 🟦 **BLUES ONLY MODE:**
+          Change only blue value randomly.
+
+          7. 🟦 **TEALS ONLY MODE:**
+          Change only blue value randomly.
+
+          8. 🟪 **PINKS ONLY MODE:**
+          Change only blue value randomly.
+
+          9. 🟨 **YELLOWS ONLY MODE:**
+          Change only blue value randomly.
+
+      default: no_color_change
+      selector:
+        select:
+          mode: dropdown
+          options:
+            - label: NO COLOR CHANGE
+              value: no_color_change
+            - label: RANDOM COLOR MODE
+              value: random
+            - label: HUE MODE
+              value: hue
+            - label: PALETTE
+              value: palette
+            - label: REDS ONLY MODE
+              value: red
+            - label: GREENS ONLY MODE
+              value: green
+            - label: BLUES ONLY MODE
+              value: blue
+            - label: TEALS ONLY MODE
+              value: teal
+            - label: PINKS ONLY MODE
+              value: pink
+            - label: YELLOWS ONLY MODE
+              value: yellow
+        #Select color mode
+    palette_choice:
+      name: Palette
+      description: |
+        Select which palette to use:
+          
+          1. 🌈 **VIBRANT:**
+          red, orange, yellow, neon-green, blue, magenta, pink.
+          
+          2. 🟪🟦🟥🟩 **PURPLE BLUE RED GREEN:**
+          Switch between: purple, blue, red, and green.
+
+          3. 🟥🟩🟦 **RGB:**
+          red, green, blue.
+
+          4. 🟪🟧🟩 **PURPLE ORANGE GREEN:**
+          Switch between: purple, orange, green.
+
+          5. 🟥🟦⬜ **RED BLUE WHITE:**
+          Switch between red, blue, white.
+
+          6. 🟥🟦 **RED BLUE:**
+          Switch between red, blue.
+
+          7. 🟥🟩 **RED GREEN:**
+          Switch between red and green.
+
+          8. 🟦🟧 **BLUE ORANGE:**
+          Switch blue and orange.
+
+          9. 🟨🟪 **YELLOW PURPLE:**
+          Switch yellow and purple.
+
+          10. 🟥⬜ **RED WHITE:**
+          Switch between red and white.
+          
+          11. **CYM:**
+          cyan, yellow magenta.
+
+      default: vibrant
+      selector:
+        select:
+          mode: dropdown
+          options:
+            - label: VIBRANT
+              value: vibrant
+            - label: PURPLE BLUE RED GREEN
+              value: pbrg
+            - label: RGB
+              value: rgb
+            - label: PURPLE ORANGE GREEN
+              value: pog
+            - label: RED BLUE WHITE
+              value: red_blue_white
+            - label: RED BLUE
+              value: red_blue
+            - label: RED GREEN
+              value: red_green
+            - label: BLUE_ORANGE
+              value: blue_oragne
+            - label: YELLOW_PURPLE
+              value: yellow_purple
+            - label: RED_WHITE
+              value: red_white
+            - label: CYM
+              value: cym
+    # Min Brightness percentage
+    min_brightness:
+      name: Minimum brightness 
+      default: 255
+      selector:
+        number:
+          min: 1
+          max: 255
+          step: 1
+          mode: slider
+    # Max brightness percentage
+    max_brightness:
+      name: Maximum brightness 
+      default: 255
+      selector:
+        number:
+          min: 1
+          max: 255
+          step: 1
+          mode: slider
+#Mode
+mode: restart
+
+#Variables
+variables:
+  party_mode_trigger: !input party_mode_trigger
+  target_light_input: !input target_light
+  sync_lights: !input sync_lights
+  randomize_color: !input randomize_color
+  hue_step: !input hue_step
+  time_between_changes: !input time_between_changes
+  transition_time: !input transition_time
+  color_mode_choice: !input color_mode
+  palette_choice: !input palette_choice
+  min_brightness: !input min_brightness
+  max_brightness: !input max_brightness
+  brightness_range: > 
+      {{ min(min_brightness, max_brightness), max(min_brightness, max_brightness) + 1 }}
+  palette: >
+      {% if palette_choice == "vibrant" %}
+        {{ [[0, 100], [30, 100], [60, 100], [100, 100], [240, 100], [300, 100], [330, 100]] }}
+      {% elif palette_choice == "pbrg" %}
+        {{ [[300, 100], [240, 100], [0, 100], [120, 100]] }}
+      {% elif palette_choice == "rgb" %}
+        {{ [[0, 100], [120, 100], [240, 100]] }}
+      {% elif palette_choice == "pog" %}
+        {{ [[300, 100], [30, 100], [120, 100]] }}
+      {% elif palette_choice == "cym" %}
+        {{ [[180, 100], [60, 100], [300, 100]] }}
+      {% elif palette_choice == "red_blue_white" %}
+        {{ [[0, 100], [240, 100], [0, 0]] }}
+      {% elif palette_choice == "red_white" %}
+        {{ [[0, 100], [0, 0]] }}
+      {% elif palette_choice == "red_blue" %}
+        {{ [[0, 100], [240, 100]] }}
+      {% elif palette_choice == "red_green" %}
+        {{ [[0, 100], [120, 100]] }}
+      {% elif palette_choice == "blue_orange" %}
+        {{ [[240, 100], [30, 100]] }}
+      {% elif palette_choice == "yellow_purple" %}
+        {{ [[60, 100], [300, 100]] }}
+      {% endif %}
+  plen: '{{ (palette | length)}}'
+  color_mode: >
+      {% if color_mode_choice in ("hue", "palette", "no_color_change") %}
+          {{ color_mode_choice }}
+      {% else %}
+          {{ "rgb" }}
+      {% endif %}
+  color_range: >
+      {% if color_mode_choice == "random" %}
+        {{ (0,256), (0,256), (0,256) }}
+      {% elif color_mode_choice == "red" %}
+        {{ (0,256), (0,1), (0,1) }}
+      {% elif color_mode_choice == "green" %}
+        {{ (0,1), (0,256), (0,1) }}
+      {% elif color_mode_choice == "blue" %}
+        {{ (0,1), (0,1), (0,256) }}
+      {% elif color_mode_choice == "teal" %}
+        {{ (0,256), (255,256), (255,256) }}
+      {% elif color_mode_choice == "pink" %}
+        {{ (255,256), (0,256), (255,256) }}
+      {% elif color_mode_choice == "yellow" %}
+        {{ (255,256), (255,256), (0,256) }}
+      {% else %}
+        {{ (255,256), (255,256), (255,256) }}
+      {% endif %}
+  # Batch lights assigning them the same color.
+  target_light: >
+    {% if sync_lights %}
+      {{ [target_light_input] }}
+    {% elif color_mode_choice == "palette" and (target_light_input | length) > plen * 5 %}
+      {% set ns = namespace(x=[]) %}
+      {% for col in range(plen) %}
+        {% set ms = namespace(y=[]) %}
+        {% for light in target_light_input %}
+          {% if loop.index % plen == col %}
+            {% set ms.y = ms.y + [light] %}
+          {% endif %} 
+        {% endfor %}
+        {% set ns.x = ns.x + [ms.y] %}
+      {% endfor %}
+      {{ ns.x }}
+    {% else %}
+      {{ target_light_input }}
+    {% endif %}
+
+# Trigger
+trigger:
+  - platform: state
+    entity_id: !input party_mode_trigger
+    to: "on"
+
+#Actions:
+action:
+  #Loop
+  - repeat:
+      sequence:
+        - variables:
+            hue_start: >
+              {% if randomize_color %}
+                {{ range(256) | random }}
+              {% elif color_mode == "hue" %}
+                {{ repeat.index * hue_step  }}
+              {% else %}
+                {{ repeat.index }}
+              {% endif %}
+        - repeat:
+            for_each: '{{ target_light }}'
+            sequence:
+              - variables:
+                  brightness: '{{ range(*brightness_range) | random }}' 
+                  color_value: >
+                    {% if color_mode == "rgb" %}
+                      {{ range(*color_range[0]) | random, range(*color_range[1]) | random, range(*color_range[2]) | random }}
+                    {% elif color_mode == "hue" %}  
+                      {{ (hue_start + repeat.index * hue_step) % 256, 100 }}
+                    {% elif color_mode == "palette" %}
+                      {{ palette[(hue_start + repeat.index) % (palette | length)] }}
+                    {% else %}
+                      {{ 255, 255, 255 }}
+                    {% endif %}
+              - service: light.turn_on
+                data: >          
+                  {% if color_mode == "no_color_change" %}
+                    {{ { "transition": transition_time, "brightness": brightness } }}
+                  {% elif color_mode in ("hue", "palette")  %}
+                    {{ { "transition": transition_time, "brightness": brightness, "hs_color": color_value } }}
+                  {% else %}
+                    {{ { "transition": transition_time, "brightness": brightness, "rgb_color": color_value } }}
+                  {% endif %}
+                target: 
+                  entity_id: '{{ repeat.item }}'
+        # Wait until the next change
+        - delay: !input time_between_changes
+      until:
+        - condition: state
+          entity_id: !input party_mode_trigger
+          state: "off"
